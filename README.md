@@ -1,63 +1,83 @@
 # 🌕 Lunar Crater Detection using Chandrayaan-2 Imagery
 
-This repository presents an end-to-end pipeline for detecting lunar craters using high-resolution imagery captured by ISRO’s **Chandrayaan-2** mission. The system leverages deep learning for object detection, enhanced by high-capacity backbone architectures, and has been evaluated on two distinct datasets: **OHRC** and **TMC-2**.
+This repository presents an end-to-end pipeline for detecting lunar craters using high-resolution imagery captured by ISRO's **Chandrayaan-2** mission. The system leverages state-of-the-art deep learning object detection models, enhanced with custom backbone architectures from the [Timm](https://github.com/huggingface/pytorch-image-models) library.
 
 ---
 
-## 📌 Project Highlights
+## 📌 Project Overview
 
-- 📡 Utilized imagery from Chandrayaan-2’s **Orbiter High Resolution Camera (OHRC)** and **Terrain Mapping Camera-2 (TMC-2)**.
-- 🧠 Built on the **YOLOv11** detection framework, enhanced with **ResNet101** from the [Timm](https://github.com/huggingface/pytorch-image-models) library.
-- 🏷️ Supervised dataset created with precise crater annotations using **Roboflow**.
-- 📈 Achieved robust performance on both OHRC and TMC-2 datasets, demonstrating high detection accuracy and generalization.
+This project addresses the challenge of automated lunar crater detection—a critical task for planetary mapping, surface age estimation, and mission planning. Using imagery from Chandrayaan-2's Orbiter High Resolution Camera (OHRC) and Terrain Mapping Camera-2 (TMC-2), we developed and evaluated multiple YOLO-based detection models with custom ResNet101 backbones.
+
+**Key Objectives:**
+- Detect craters of varying sizes in high-resolution lunar imagery
+- Compare performance across different YOLO architectures (YOLO11, YOLO12)
+- Evaluate model generalization across datasets with different resolutions and characteristics
 
 ---
 
-## 🛰️ Datasets Used
+## 🛰️ Datasets
 
-| Camera | Resolution | Tile Sizes Used |
-|--------|------------|-----------------|
-| OHRC   | ~0.25 m/pixel | 304×640 px |
-| TMC-2  | ~5 m/pixel     | 79×640 px  |
+The project uses two distinct datasets from Chandrayaan-2:
 
-All images were preprocessed to maintain aspect ratio and input compatibility for deep learning pipelines. Bounding box annotations were prepared manually via Roboflow.
+| Camera | Resolution | Tile Sizes | Characteristics |
+|--------|------------|------------|-----------------|
+| **OHRC** | ~0.25 m/pixel | 304×640 px | Very high resolution, detailed surface features |
+| **TMC-2** | ~5 m/pixel | 79×640 px | Lower resolution, broader coverage |
+
+**Data Preparation:**
+- Images tiled and preprocessed to maintain aspect ratio
+- Bounding box annotations created manually using **Roboflow**
+- Datasets formatted for YOLO training pipeline compatibility
 
 ---
 
 ## 🧠 Model Architecture
 
-- Detection Framework: **Ultralytics YOLOv11**
-- Backbone: **ResNet101** (replacing default YOLO backbone)
-- Framework modifications made to integrate [Timm](https://rwightman.github.io/pytorch-image-models/) backbones.
-- Optimized for crater-like morphology and varying terrain texture typical in lunar surfaces.
+The detection system is built on Ultralytics YOLO frameworks with custom backbone modifications:
+
+| Component | Implementation |
+|-------------|----------------|
+| Detection Framework | Ultralytics YOLO11 / YOLO12 |
+| Backbone | ResNet101 (via Timm library) |
+| Integration | Custom YAML configs replacing default YOLO backbones |
+
+**Key Modifications:**
+- Replaced standard YOLO backbones with ResNet101 for enhanced feature extraction
+- Optimized for crater-like morphology and varying lunar terrain textures
+- Configured anchor boxes suitable for circular/elliptical crater shapes
 
 ---
 
 ## 📊 Results
 
-### OHRC Results (Epochs 0–300)
-- **Precision:** 74.6%
-- **Recall:** 66.8%
-- **mAP@0.50:** 66.7%
-- **mAP@0.50:0.95:** 32.4%
+### YOLO12 Model Performance
 
-### TMC-2 Results (Epochs 0–150)
-- **Precision:** 80.9%
-- **Recall:** 51.9%
-- **mAP@0.50:** 58.7%
-- **mAP@0.50:0.95:** 33.7%
+| Dataset | Precision | Recall | mAP@0.50 | mAP@0.50:0.95 |
+|---------|-----------|--------|----------|---------------|
+| **OHRC** | 0.746 | 0.668 | 66.7% | 32.4% |
+| **TMC-2** | 0.809 | 0.519 | 58.7% | 33.7% |
 
-These results indicate consistent improvement in both detection accuracy and bounding box localization across epochs. mAP@50–95 scores particularly demonstrate the model's ability to perform well under strict IoU thresholds, reflecting its spatial precision.
+**Observations:**
+- **OHRC:** Strong recall (66.8%) indicating good detection of actual craters, with balanced precision
+- **TMC-2:** Higher precision (80.9%) but lower recall, suggesting conservative detection with fewer false positives
+- Both models demonstrate effective localization under strict IoU thresholds (mAP@50-95)
 
 ---
 
-## 🔗 Google Colab Notebooks
+## 📁 Repository Structure
 
-- 📘 **OHRC Code:**  
-  [Colab Notebook](https://colab.research.google.com/drive/1FNppCZmDVBs3GjI-32QID0mW6Ii9GWJk?usp=sharing)
+```
+Lunar-Crater-Detection-01/
+├── code/
+│   ├── yolo11/          # YOLO11 implementation for OHRC & TMC-2
+│   └── yolo12/          # YOLO12 implementation for OHRC & TMC-2
+├── yolo-custom-backbone-scripts/
+│   ├── yolo11/          # Custom backbone configs for YOLO11
+│   └── yolo12/          # Custom backbone configs for YOLO12
+└── README.md
+```
 
-- 📙 **TMC-2 Code:**  
-  [Colab Notebook](https://colab.research.google.com/drive/1BivB5VF1-MvjGvyNr4cGcxqugsAzKs1x?usp=sharing)
+**Notebooks:** The training and evaluation code is available as Jupyter notebooks within the `code/` directory for each model variant.
 
 ---
 
@@ -69,14 +89,16 @@ These results indicate consistent improvement in both detection accuracy and bou
     cd lunar-crater-detector
     ```
 
-2. Open the relevant Colab notebook (OHRC or TMC-2) using the links above.
+2. Navigate to the relevant model directory (`code/yolo11/` or `code/yolo12/`)
 
-3. Run through the cells to:
+3. Open the Jupyter notebook for your dataset (OHRC or TMC-2)
+
+4. Run through the cells to:
     - Load and visualize datasets
-    - Initialize and train the YOLOv11 model
+    - Initialize and train the YOLO model
     - Evaluate and visualize detection outputs
 
-4. Optionally, customize model parameters or backbones via the `timm` interface.
+5. Customize model parameters or backbones via the `timm` interface in the notebook
 
 ---
 
