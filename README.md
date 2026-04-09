@@ -62,6 +62,17 @@ The detection system is built on Ultralytics YOLO frameworks with custom backbon
 - **TMC-2:** Higher precision (80.9%) but lower recall, suggesting conservative detection with fewer false positives
 - Both models demonstrate effective localization under strict IoU thresholds (mAP@50-95)
 
+### YOLO11 Model Performance
+
+| Dataset | Precision | Recall | mAP@0.50 | mAP@0.50:0.95 |
+|---------|-----------|--------|----------|---------------|
+| **OHRC** | 0.746 | 0.668 | 66.7% | 32.4% |
+| **TMC-2** | 0.809 | 0.519 | 58.7% | 33.7% |
+
+**Training Details:**
+- OHRC: Trained for 300 epochs
+- TMC-2: Trained for 150 epochs
+
 ---
 
 ## 📁 Repository Structure
